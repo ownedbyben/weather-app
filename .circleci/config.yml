@@ -9,6 +9,9 @@ jobs:
     steps:
       - checkout
 
+      # Start Docker service
+      - setup_remote_docker
+
       # Install Docker CLI to build Docker image
       - run:
           name: Install Docker CLI
