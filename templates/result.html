@@ -1,0 +1,35 @@
+<html>
+    <head><title>this is the page after submit</title></head>
+<body style="font-family: Century Gothic, sans-serif; ">
+    <h1> location info!</h1>
+    <!-- Add the button for redirecting to the history page -->
+    <a href="{{ url_for('history') }}" class="btn btn-primary">View History</a>
+
+    <h2>location name: {{location}} </h2>
+    <h2>the country: {{country}} </h2>
+
+    <h1> The temperature for the next week</h1>
+    <h2>1st day temperature at {{location}}</h2>
+    <h3>DAY: {{temp_day[0]}},NIGHT: {{temp_night[0]}}</h3>
+
+    <h2>2sd day temperature at {{location}}</h2>
+    <h3>DAY: {{temp_day[1]}},NIGHT: {{temp_night[1]}}</h3>
+
+    <h2>3th day temperature at {{location}} </h2>
+    <h3>DAY: {{temp_day[2]}},NIGHT: {{temp_night[2]}}</h3>
+
+    <h2>4th day temperature at {{location}} </h2>
+    <h3>DAY: {{temp_day[3]}},NIGHT: {{temp_night[3]}}</h3>
+
+    <h2>5th day temperature at {{location}} </h2>
+    <h3>DAY: {{temp_day[4]}},NIGHT: {{temp_night[4]}}</h3>
+
+    <h2>6th day temperature at {{location}} </h2>
+    <h3>DAY: {{temp_day[5]}},NIGHT: {{temp_night[5]}}</h3>
+
+    <h2>7th day temperature at {{location}} </h2>
+    <h3>DAY: {{temp_day[6]}},NIGHT: {{temp_night[6]}}</h3>
+</body>
+</html>
+
+
