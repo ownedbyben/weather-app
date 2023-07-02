@@ -31,6 +31,10 @@ jobs:
             docker run -d -p 80:5000 my_weather_app  # Make sure to map the correct ports
             sleep 10  # Give the app some time to start (you can adjust this duration)
             docker ps  # Check running containers again (for debugging)
+          
+            # Log into the Docker container and check if the app is running on port 5000
+            docker exec -it $(docker ps -lq) netstat -tuln | grep 5000
+
 
       # Test the Docker image
       - run:
