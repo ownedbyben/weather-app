@@ -40,7 +40,7 @@ jobs:
       - run:
           name: Test Docker Image
           command: |
-            python -m unittest unit-test.py
+            python3 -m unittest unit-test.py
 
       # Send test report to Discord
       - run:
