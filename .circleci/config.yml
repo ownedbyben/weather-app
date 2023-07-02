@@ -28,7 +28,7 @@ jobs:
       - run:
           name: Test Docker Image
           command: |
-            docker run -p 80:5000 my_weather_app
+            docker run my_weather_app python -m unittest unit-test.py
 
       # Send test report to Discord
       - run:
@@ -41,4 +41,3 @@ workflows:
   build_and_notify:
     jobs:
       - build_and_test
-
