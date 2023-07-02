@@ -1,0 +1,62 @@
+version: 2.1
+orbs:
+  discord: antonioned/discord@0.1.0
+
+jobs:
+  build_and_test:
+    docker:
+      - image: circleci/python:3.9
+    steps:
+      - checkout
+
+      # Start Docker service
+      - setup_remote_docker
+
+      # Install Docker CLI to build Docker image (optional, usually already installed)
+      #- run:
+          #name: Install Docker CLI
+          #command: |
+            #curl -fsSL https://get.docker.com -o get-docker.sh
+            #sudo sh get-docker.sh
+
+      # Build Docker image
+      - run:
+          name: Build Docker Image
+          command: docker build -t my_weather_app .
+
+      - run:
+         name: Test Docker Image
+         command: |
+            docker ps
+            docker run -d -p 5000:5000 my_weather_app
+            sleep 20  # Give the app more time to start (you can adjust this duration)
+            docker ps
+            docker logs $(docker ps -lq)
+            docker exec -it $(docker ps -lq) netstat -tuln | grep 5000
+            python3 -m unittest unit-test.py
+
+
+      # Test the Docker image
+      - run:
+          name: Test Docker Image
+          command: |
+            python3 -m unittest unit-test2.py
+
+      # Send test report to Discord
+      - run:
+          name: Send Discord Notification
+          command: |
+            if [ $? -eq 0 ]; then
+              # Success notification
+              curl -X POST -H "Content-Type: application/json" -d '{"content":"Weather App Tests Passed! :white_check_mark:"}' "https://discord.com/api/webhooks/1125033221881610250/8FnLgybV6TKEb2ZMfjqrQ7T-wlPmVinY-vRDnh0aHZia4oMilft6BvgbKYelE6EFH6sF"
+            else
+              # Failure notification
+              curl -X POST -H "Content-Type: application/json" -d '{"content":"Weather App Tests Failed! :x:"}' "https://discord.com/api/webhooks/1125033221881610250/8FnLgybV6TKEb2ZMfjqrQ7T-wlPmVinY-vRDnh0aHZia4oMilft6BvgbKYelE6EFH6sF"
+            fi
+
+
+workflows:
+  version: 2
+  build_and_notify:
+    jobs:
+      - build_and_test
