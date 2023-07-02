@@ -24,6 +24,14 @@ jobs:
           name: Build Docker Image
           command: docker build -t my_weather_app .
 
+      - run:
+         name: Test Docker Image
+         command: |
+            docker ps  # Check running containers (for debugging)
+            docker run -d -p 80:5000 my_weather_app  # Make sure to map the correct ports
+            sleep 10  # Give the app some time to start (you can adjust this duration)
+            docker ps  # Check running containers again (for debugging)
+
       # Test the Docker image
       - run:
           name: Test Docker Image
@@ -35,6 +43,8 @@ jobs:
           name: Send Discord Notification
           command: |
             curl -X POST -H "Content-Type: application/json" -d '{"content":"Weather App Tests Passed! :white_check_mark:"}' "https://discord.com/api/webhooks/1125033221881610250/8FnLgybV6TKEb2ZMfjqrQ7T-wlPmVinY-vRDnh0aHZia4oMilft6BvgbKYelE6EFH6sF"
+      # Test the Docker image
+      
 
 workflows:
   version: 2
