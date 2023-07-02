@@ -46,9 +46,14 @@ jobs:
       - run:
           name: Send Discord Notification
           command: |
-            curl -X POST -H "Content-Type: application/json" -d '{"content":"Weather App Tests Passed! :white_check_mark:"}' "https://discord.com/api/webhooks/1125033221881610250/8FnLgybV6TKEb2ZMfjqrQ7T-wlPmVinY-vRDnh0aHZia4oMilft6BvgbKYelE6EFH6sF"
-      # Test the Docker image
-      
+            if [ $? -eq 0 ]; then
+              # Success notification
+              curl -X POST -H "Content-Type: application/json" -d '{"content":"Weather App Tests Passed! :white_check_mark:"}' "https://discord.com/api/webhooks/1125033221881610250/8FnLgybV6TKEb2ZMfjqrQ7T-wlPmVinY-vRDnh0aHZia4oMilft6BvgbKYelE6EFH6sF"
+            else
+              # Failure notification
+              curl -X POST -H "Content-Type: application/json" -d '{"content":"Weather App Tests Failed! :x:"}' "https://discord.com/api/webhooks/1125033221881610250/8FnLgybV6TKEb2ZMfjqrQ7T-wlPmVinY-vRDnh0aHZia4oMilft6BvgbKYelE6EFH6sF"
+            fi
+
 
 workflows:
   version: 2
