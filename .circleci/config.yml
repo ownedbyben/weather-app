@@ -12,7 +12,7 @@ jobs:
       # Start Docker service
       - setup_remote_docker
 
-      # Install Docker CLI to build Docker image
+      # Install Docker CLI to build Docker image (optional, usually already installed)
       - run:
           name: Install Docker CLI
           command: |
@@ -28,7 +28,7 @@ jobs:
       - run:
           name: Test Docker Image
           command: |
-            docker run my_weather_app -d -p 80:5000
+            docker run -p 80:5000 my_weather_app
 
       # Send test report to Discord
       - run:
@@ -41,5 +41,4 @@ workflows:
   build_and_notify:
     jobs:
       - build_and_test
-
 
