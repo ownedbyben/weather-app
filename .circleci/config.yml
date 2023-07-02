@@ -22,7 +22,7 @@ jobs:
       # Build Docker image
       - run:
           name: Build Docker Image
-          command: docker build -t my_weather_app .
+          command: dockerd build -t my_weather_app .
 
       - run:
          name: Test Docker Image
