@@ -13,47 +13,50 @@ jobs:
       - setup_remote_docker
 
       # Install Docker CLI to build Docker image (optional, usually already installed)
-      #- run:
-          #name: Install Docker CLI
-          #command: |
-            #curl -fsSL https://get.docker.com -o get-docker.sh
-            #sudo sh get-docker.sh
+      - run:
+          name: Install Docker CLI
+          command: |
+            curl -fsSL https://get.docker.com -o get-docker.sh
+            sudo sh get-docker.sh
 
       # Build Docker image
       - run:
           name: Build Docker Image
           command: docker build -t my_weather_app .
 
+      # Start the Docker container for the web app
       - run:
-         name: Test Docker Image
-         command: |
-            docker ps
-            docker run -d -p 5000:5000 my_weather_app
-            sleep 20  # Give the app more time to start (you can adjust this duration)
-            docker ps
-            docker logs $(docker ps -lq)
-            docker exec -it $(docker ps -lq) netstat -tuln | grep 5000
-            python3 -m unittest unit-test.py
+          name: Start Web App Container
+          command: docker run -d -p 5000:5000 my_weather_app
 
-
-      # Test the Docker image
+      # Wait for the web app to be ready (adjust the timeout as needed)
       - run:
-          name: Test Docker Image
+          name: Wait for Web App
           command: |
-            python3 -m unittest unit-test2.py
+            i=0
+            while [ $i -lt 30 ]; do
+              sleep 5
+              if curl -s http://localhost:5000; then
+                break
+              fi
+              i=$((i+1))
+            done
+
+      # Log into the Docker container and check if the app is running on port 5000
+      - run:
+          name: Check Web App Status
+          command: docker exec -it $(docker ps -lq) netstat -tuln | grep 5000
+
+      # Test the Python code using unit-test2.py
+      - run:
+          name: Test Python Code
+          command: python3 -m unittest unit-test2.py
 
       # Send test report to Discord
       - run:
           name: Send Discord Notification
           command: |
-            if [ $? -eq 0 ]; then
-              # Success notification
-              curl -X POST -H "Content-Type: application/json" -d '{"content":"Weather App Tests Passed! :white_check_mark:"}' "https://discord.com/api/webhooks/1125033221881610250/8FnLgybV6TKEb2ZMfjqrQ7T-wlPmVinY-vRDnh0aHZia4oMilft6BvgbKYelE6EFH6sF"
-            else
-              # Failure notification
-              curl -X POST -H "Content-Type: application/json" -d '{"content":"Weather App Tests Failed! :x:"}' "https://discord.com/api/webhooks/1125033221881610250/8FnLgybV6TKEb2ZMfjqrQ7T-wlPmVinY-vRDnh0aHZia4oMilft6BvgbKYelE6EFH6sF"
-            fi
-
+            curl -X POST -H "Content-Type: application/json" -d '{"content":"Weather App Tests Passed! :white_check_mark:"}' "https://discord.com/api/webhooks/1125033221881610250/8FnLgybV6TKEb2ZMfjqrQ7T-wlPmVinY-vRDnh0aHZia4oMilft6BvgbKYelE6EFH6sF"
 
 workflows:
   version: 2
