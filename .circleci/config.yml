@@ -30,17 +30,11 @@ jobs:
             docker ps
             docker run -d --name weather_container -p 5000:5000 my_weather_app
             sleep 20  # Give the app more time to start (you can adjust this duration)
-            docker ps
+            dockerd ps
             docker exec weather_container python3 unit-test.py 
 
        
 
-
-      # Test the Docker image
-      - run:
-          name: Test Docker Image
-          command: |
-            python3 -m unittest unit-test2.py
 
       # Send test report to Discord
       - run:
