@@ -9,7 +9,7 @@ spec:
     namespace: default
   source:
     repoURL: 'https://github.com/ownedbyben/weather-app'
-    path: ''
+    path: 'https://github.com/ownedbyben/weather-app/blob/main/argocd-application.yaml'
     targetRevision: 'main'
   project: default
   syncPolicy:
