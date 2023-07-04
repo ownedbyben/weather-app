@@ -36,8 +36,8 @@ jobs:
       - run:
          name: Push Docker Image to GitHub Container Registry
          command: |
-           docker tag my_weather_app ghcr.io/GHCR_REGISTRY_USERNAME/my_weather_app:latest
-           docker push ghcr.io/GHCR_REGISTRY_USERNAME/my_weather_app:latest
+           docker tag my_weather_app ghcr.io/$GHCR_REGISTRY_USERNAME/my_weather_app:latest
+           docker push ghcr.io/$GHCR_REGISTRY_USERNAME/my_weather_app:latest
 
       - discord/status:
           #fail_only: true
