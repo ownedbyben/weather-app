@@ -30,7 +30,7 @@ jobs:
 
       
       - discord/status:
-          fail_only: true
+          #fail_only: true
           failure_message: "Triggered by: **${CIRCLE_USERNAME}** \\n\\n Ooops! The **$CIRCLE_JOB** job has failed!"
           success_message: "Triggered by: **${CIRCLE_USERNAME}** \\n\\n Hooray! The **$CIRCLE_JOB** job has succeeded!"
           webhook: "${DISCORD_WEBHOOK}"
