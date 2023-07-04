@@ -1,0 +1,52 @@
+version: 2.1
+orbs:
+  discord: antonioned/discord@0.1.0
+
+jobs:
+  build_and_test:
+    docker:
+      - image: cimg/python:3.9
+    steps:
+      - checkout
+
+      # Start Docker service
+      - setup_remote_docker
+
+      # Build Docker image
+      - run:
+          name: Build Docker Image
+          command: docker build -t my_weather_app .
+          environment:
+            DISCORD_WEBHOOK: $DISCORD_WEBHOOK
+
+      - run:
+         name: Test Docker Image
+         command: |
+            docker ps
+            docker run -d --name weather_container -p 5000:5000 my_weather_app
+            sleep 20  # Give the app more time to start (you can adjust this duration)
+            docker ps
+            docker exec weather_container python3 unit-test.py 
+
+      - run:
+         name: Authenticate with GitHub Container Registry
+         command: |
+           echo "${GHCR_REGISTRY_TOKEN}" | docker login ghcr.io -u "${GHCR_REGISTRY_USERNAME}" --password-stdin
+
+      - run:
+         name: Push Docker Image to GitHub Container Registry
+         command: |
+           docker tag my_weather_app ghcr.io/$GHCR_REGISTRY_USERNAME/my_weather_app:latest
+           docker push ghcr.io/$GHCR_REGISTRY_USERNAME/my_weather_app:latest
+           
+      - discord/status:
+          #fail_only: true
+          failure_message: "Triggered by: **${CIRCLE_USERNAME}** \\n\\n Ooops! The **$CIRCLE_JOB** job has failed!"
+          success_message: "Triggered by: **${CIRCLE_USERNAME}** \\n\\n Great news! The **$CIRCLE_JOB** job has succeeded!"
+          webhook: "${DISCORD_WEBHOOK}"
+
+workflows:
+  version: 2
+  build_and_notify:
+    jobs:
+      - build_and_test
