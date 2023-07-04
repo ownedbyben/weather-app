@@ -38,26 +38,7 @@ jobs:
          command: |
            docker tag my_weather_app ghcr.io/$GHCR_REGISTRY_USERNAME/my_weather_app:latest
            docker push ghcr.io/$GHCR_REGISTRY_USERNAME/my_weather_app:latest
-
-      # Tag Docker image for Docker Hub
-      - run:
-          name: Tag Docker Image
-          command: |
-            docker tag my_weather_app:latest ownedbyben/my_weather_app:latest
-          environment:
-            DOCKERHUB_USERNAME: $DOCKERHUB_USERNAME
-
-      # Log in to Docker Hub and push the image
-      - run:
-          name: Push Docker Image to Docker Hub
-          command: |
-            echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker push ownedbyben/my_weather_app:latest
-          environment:
-            DOCKERHUB_USERNAME: $DOCKERHUB_USERNAME
-            DOCKERHUB_PASSWORD: $DOCKERHUB_PASSWORD
-
-
+           
       - discord/status:
           #fail_only: true
           failure_message: "Triggered by: **${CIRCLE_USERNAME}** \\n\\n Ooops! The **$CIRCLE_JOB** job has failed!"
