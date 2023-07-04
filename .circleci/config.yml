@@ -52,7 +52,7 @@ jobs:
           name: Push Docker Image to Docker Hub
           command: |
             echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker push $DOCKERHUB_USERNAME/my_weather_app:latest
+            docker push "$DOCKERHUB_USERNAME/my_weather_app:latest"
           environment:
             DOCKERHUB_USERNAME: $DOCKERHUB_USERNAME
             DOCKERHUB_PASSWORD: $DOCKERHUB_PASSWORD
