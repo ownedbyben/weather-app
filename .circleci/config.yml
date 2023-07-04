@@ -43,7 +43,7 @@ jobs:
       - run:
           name: Tag Docker Image
           command: |
-            docker tag my_weather_app:latest $DOCKERHUB_USERNAME/my_weather_app:latest
+            docker tag my_weather_app:latest "$DOCKERHUB_USERNAME/my_weather_app:latest"
           environment:
             DOCKERHUB_USERNAME: $DOCKERHUB_USERNAME
 
