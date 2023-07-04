@@ -5,24 +5,19 @@ orbs:
 jobs:
   build_and_test:
     docker:
-      - image: circleci/python:3.9
+      - image: cimg/python:3.9
     steps:
       - checkout
 
       # Start Docker service
       - setup_remote_docker
 
-      # Install Docker CLI to build Docker image (optional, usually already installed)
-      #- run:
-          #name: Install Docker CLI
-          #command: |
-            #curl -fsSL https://get.docker.com -o get-docker.sh
-            #sudo sh get-docker.sh
-
       # Build Docker image
       - run:
           name: Build Docker Image
           command: docker build -t my_weather_app .
+          environment:
+            DISCORD_WEBHOOK: $DISCORD_WEBHOOK
 
       - run:
          name: Test Docker Image
@@ -30,23 +25,15 @@ jobs:
             docker ps
             docker run -d --name weather_container -p 5000:5000 my_weather_app
             sleep 20  # Give the app more time to start (you can adjust this duration)
-            dockerd ps
+            docker ps
             docker exec weather_container python3 unit-test.py 
 
-       
-
-
-      # Send test report to Discord
-      - run:
-          name: Send Discord Notification
-          command: |
-            if [ $? -eq 0 ]; then
-              # Success notification
-              curl -X POST -H "Content-Type: application/json" -d '{"content":"Weather App Tests Passed! :white_check_mark:"}' "https://discord.com/api/webhooks/1125033221881610250/8FnLgybV6TKEb2ZMfjqrQ7T-wlPmVinY-vRDnh0aHZia4oMilft6BvgbKYelE6EFH6sF"
-            else
-              # Failure notification
-              curl -X POST -H "Content-Type: application/json" -d '{"content":"Weather App Tests Failed! :x:"}' "https://discord.com/api/webhooks/1125033221881610250/8FnLgybV6TKEb2ZMfjqrQ7T-wlPmVinY-vRDnh0aHZia4oMilft6BvgbKYelE6EFH6sF"
-            fi
+      
+      - discord/status:
+          fail_only: true
+          failure_message: "Triggered by: **${CIRCLE_USERNAME}** \\n\\n Ooops! The **$CIRCLE_JOB** job has failed!"
+          success_message: "Triggered by: **${CIRCLE_USERNAME}** \\n\\n Hooray! The **$CIRCLE_JOB** job has succeeded!"
+          webhook: "${DISCORD_WEBHOOK}"
 
 
 workflows:
